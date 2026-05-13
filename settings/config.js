@@ -1,4 +1,4 @@
-// © 2026 ZEE BOT | Powered by CRYSNOVA AI V2 Technology
+// © 2026 CODY AI | Powered by CRYSNOVA AI V2 Technology
 // Config reads from .env (primary) → getVar runtime (secondary) → defaults
 //
 
@@ -53,13 +53,13 @@ const resolvedOwner =
 
 /*
 ──────────────────────────────────────────
-Config (ZEE BOT structure + CRYSNOVA V2 fields)
+Config (CODY AI structure + CRYSNOVA V2 fields)
 ──────────────────────────────────────────
 */
 const config = {
 
     // ════════════════════════════════════════════
-    // BOT IDENTITY (ZEE BOT .env style)
+    // BOT IDENTITY (CODY AI .env style)
     // ════════════════════════════════════════════
     owner: resolvedOwner,
 
@@ -83,7 +83,7 @@ const config = {
         'https://cdn.crysnovax.link/files/1778529162616-eca99707-7b11-453a-802a-e85a9d1c2395.jpeg',
 
     // ════════════════════════════════════════════
-    // BOT STATUS / MODE (ZEE BOT .env style)
+    // BOT STATUS / MODE (CODY AI .env style)
     // ════════════════════════════════════════════
     status: {
         public:   process.env.PUBLIC_MODE   !== undefined ? process.env.PUBLIC_MODE   === 'false'  : (getVar('PUBLIC_MODE')   ?? userConfig?.bot?.public   ?? true),
@@ -92,7 +92,7 @@ const config = {
     },
 
     // ════════════════════════════════════════════
-    // BOT MODE FLAGS (ZEE BOT specific)
+    // BOT MODE FLAGS (CODY AI specific)
     // ════════════════════════════════════════════
     mode: {
         autoRead:      process.env.AUTO_READ      !== 'false',
@@ -110,13 +110,13 @@ const config = {
             process.env.BOT_NAME         ||
             getVar('BOT_NAME')           ||
             userConfig?.bot?.name        ||
-            'ZEE BOT',
+            'CODY AI',
 
         packname:
             process.env.BOT_NAME         ||
             getVar('BOT_NAME')           ||
             userConfig?.bot?.name        ||
-            'ZEE BOT',
+            'CODY AI',
 
         // ════════════════════════════════════════════
         // PREFIX — supports null/empty for no prefix
@@ -141,9 +141,9 @@ const config = {
             return '.'; // Default
         })(),
 
-        description: 'Professional WhatsApp Bot — ZEE BOT powered by CRYSNOVA AI V2',
-        author:      'https://github.com/crysnovax/CRYSNOVA_AI',
-        footer:      '© ZEE BOT | Powered by CRYSNOVA AI',
+        description: 'Professional WhatsApp Bot — CODY AI powered by CRYSNOVA AI V2',
+        author:      'https://github.com/crysnovax/CODY',
+        footer:      '© CODY AI | Powered by CRYSNOVA AI',
 
         ownerJid:
             getVar('OWNER_JID')          ||
@@ -154,11 +154,11 @@ const config = {
             process.env.OWNER_NAME       ||
             getVar('OWNER_NAME')         ||
             userConfig?.owner?.name      ||
-            'ZEE OWNER'
+            'CRYSNOVA'
     },
 
     // ════════════════════════════════════════════
-    // PERMISSIONS (ZEE BOT .env style)
+    // PERMISSIONS (CODY AI .env style)
     // ════════════════════════════════════════════
     permissions: {
         owners: process.env.OWNER_NUMBERS
@@ -186,7 +186,7 @@ const config = {
     },
 
     // ════════════════════════════════════════════
-    // AUTO REPLY (ZEE BOT feature)
+    // AUTO REPLY (CODY AI feature)
     // ════════════════════════════════════════════
     autoReply: {
         enabled: process.env.AUTO_REPLY !== 'false',
@@ -199,7 +199,7 @@ const config = {
         greetings: {
             enabled:  true,
             keywords: ['hi', 'hello', 'hey', 'morning', 'afternoon', 'evening'],
-            response: 'Hello! 👋 How can ZEE BOT help you today?'
+            response: 'Hello! 👋 How can CODY AI help you today?'
         }
     },
 
@@ -210,12 +210,12 @@ const config = {
         name:
             process.env.BOT_NAME ||
             getVar('BOT_NAME')   ||
-            'ZEE BOT',
+            'CODY AI',
         id: '120363402922206865@newsletter'
     },
 
     // ════════════════════════════════════════════
-    // API KEYS (ZEE BOT .env style)
+    // API KEYS (CODY AI .env style)
     // ════════════════════════════════════════════
     api: {
         baseurl:
@@ -272,25 +272,25 @@ const config = {
         packname:
             process.env.BOT_NAME         ||
             getVar('BOT_NAME')           ||
-            'ZEE BOT',
+            'CODY AI',
         author:
             process.env.STICKER_AUTHOR   ||
             getVar('STICKER_AUTHOR')     ||
-            'ZEE BOT'
+            'CODY AI'
     },
 
     // ════════════════════════════════════════════
-    // BRANDING (ZEE BOT style)
+    // BRANDING (CODY AI style)
     // ════════════════════════════════════════════
     branding: {
-        footer:  '© ZEE BOT | Powered by CRYSNOVA AI',
+        footer:  '© CODY AI | Powered by CRYSNOVA AI',
         channel: 'https://whatsapp.com/channel/0029Vb6pe77K0IBn48HLKb38',
-        group:   process.env.GROUP_LINK || 'https://chat.whatsapp.com/Besbj8VIle1GwxKKZv1lax?mode=gi_t',
-        repo:    'https://github.com/crysnovax/CRYSNOVA_AI'
+        group:   process.env.GROUP_LINK || 'https://chat.whatsapp.com/Besbj8VIle1GwxKKZv1lax',
+        repo:    'https://github.com/crysnovax/CODY'
     },
 
     // ════════════════════════════════════════════
-    // LOGGING (ZEE BOT style)
+    // LOGGING (CODY AI style)
     // ════════════════════════════════════════════
     logging: {
         level:       process.env.LOG_LEVEL || 'silent',
