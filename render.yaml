@@ -7,7 +7,7 @@ services:
     startCommand: node index.js
     envVars:
       - key: NODE_VERSION
-        value: 18
+        value: 22
       - key: OWNER_NUMBER
         sync: false
       - key: OWNER_NAME
