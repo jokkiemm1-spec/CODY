@@ -1,6 +1,5 @@
 /**
  * CODY AI — Connection Manager
- * Supports Mega session storage
  * CommonJS version (compatible with "type": "commonjs")
  */
 
@@ -16,7 +15,6 @@ const pino = require('pino');
 const fs = require('fs-extra');
 const path = require('path');
 const zlib = require('zlib');
-const { downloadSession } = require('./mega.js');
 
 const SESSION_PATH = './sessions';
 
@@ -27,41 +25,9 @@ async function getAuthState() {
     return await useMultiFileAuthState(SESSION_PATH);
 }
 
-/**
- * Decode SESSION_ID — supports:
- * - Plain base64
- * - Gzip-compressed
- * - Mega short ID (CODY_AI!M:xxxx)
- */
 async function decodeSession(sessionId) {
     if (!sessionId || typeof sessionId !== 'string') return false;
 
-    // ── MEGA SHORT ID ──
-    if (sessionId.startsWith('CODY_AI!M:')) {
-        const shortId = sessionId.replace('CODY_AI!M:', '');
-        console.log('📦 Fetching session from Mega using ID:', shortId);
-        try {
-            const sessionJson = await downloadSession(shortId);
-            const creds = JSON.parse(sessionJson);
-            
-            if (!fs.existsSync(SESSION_PATH)) {
-                fs.mkdirSync(SESSION_PATH, { recursive: true });
-            }
-            
-            fs.writeFileSync(
-                path.join(SESSION_PATH, 'creds.json'),
-                JSON.stringify(creds, null, 2)
-            );
-            
-            console.log('✅ Session restored from Mega');
-            return true;
-        } catch (err) {
-            console.log('❌ Failed to fetch from Mega:', err.message);
-            return false;
-        }
-    }
-
-    // ── BASE64 / COMPRESSED SESSION ──
     let base64 = sessionId.trim();
     if (base64.includes('!')) {
         base64 = base64.split('!').pop();
@@ -143,7 +109,7 @@ async function createSocket(sessionId) {
         connectTimeoutMs: 60000,
         defaultQueryTimeoutMs: 60000,
         shouldSyncHistoryMessage: () => false,
-        getMessage: null // Removed fallback to prevent "CRYSNOVA AI" spam
+        getMessage: null
     });
 
     return { sock, saveCreds, state };
