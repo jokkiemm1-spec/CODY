@@ -1,23 +1,22 @@
 /**
  * CODY AI — Connection Manager
- * Grafted from CODY AI v2.5.0 core/connection.js
- * Adapted: SESSION_PATH → ./sessions (matches CRYSNOVA config)
+ * Supports Mega session storage
  */
 
-const {
-    default: makeWASocket,
+import {
+    default as makeWASocket,
     useMultiFileAuthState,
     fetchLatestBaileysVersion,
     Browsers,
     DisconnectReason
-} = require('@crysnovax/baileys');
-const { Boom }  = require('@hapi/boom');
-const pino      = require('pino');
-const fs        = require('fs-extra');
-const path      = require('path');
-const zlib      = require('zlib');
+} from '@crysnovax/baileys';
+import { Boom } from '@hapi/boom';
+import pino from 'pino';
+import fs from 'fs-extra';
+import path from 'path';
+import zlib from 'zlib';
+import { downloadSession } from './mega.js';
 
-// ── Match CRYSNOVA's session folder (config.session = 'sessions') ──
 const SESSION_PATH = './sessions';
 
 async function getAuthState() {
@@ -28,12 +27,40 @@ async function getAuthState() {
 }
 
 /**
- * Decode SESSION_ID — supports plain base64 AND gzip-compressed
- * (KnightBot!, CODY_AI!, CRYSNOVA!, etc.)
+ * Decode SESSION_ID — supports:
+ * - Plain base64
+ * - Gzip-compressed
+ * - Mega short ID (CODY_AI!M:xxxx)
  */
 async function decodeSession(sessionId) {
     if (!sessionId || typeof sessionId !== 'string') return false;
 
+    // ── MEGA SHORT ID ──
+    if (sessionId.startsWith('CODY_AI!M:')) {
+        const shortId = sessionId.replace('CODY_AI!M:', '');
+        console.log('📦 Fetching session from Mega using ID:', shortId);
+        try {
+            const sessionJson = await downloadSession(shortId);
+            const creds = JSON.parse(sessionJson);
+            
+            if (!fs.existsSync(SESSION_PATH)) {
+                fs.mkdirSync(SESSION_PATH, { recursive: true });
+            }
+            
+            fs.writeFileSync(
+                path.join(SESSION_PATH, 'creds.json'),
+                JSON.stringify(creds, null, 2)
+            );
+            
+            console.log('✅ Session restored from Mega');
+            return true;
+        } catch (err) {
+            console.log('❌ Failed to fetch from Mega:', err.message);
+            return false;
+        }
+    }
+
+    // ── BASE64 / COMPRESSED SESSION ──
     let base64 = sessionId.trim();
     if (base64.includes('!')) {
         base64 = base64.split('!').pop();
@@ -77,7 +104,7 @@ function encodeSession() {
         const credsPath = path.join(SESSION_PATH, 'creds.json');
         if (!fs.existsSync(credsPath)) return null;
         const creds = fs.readFileSync(credsPath, 'utf8');
-        return `CRYSNOVA!${Buffer.from(creds).toString('base64')}`;
+        return `CODY_AI!${Buffer.from(creds).toString('base64')}`;
     } catch (err) {
         console.log('❌ Failed to encode session:', err.message);
         return null;
@@ -93,7 +120,7 @@ async function createSocket(sessionId) {
         console.log('🔑 No local session. Attempting SESSION_ID restore...');
         const restored = await decodeSession(sessionId);
         if (!restored) {
-            console.log('⚠️  SESSION_ID invalid. Requesting fresh pair code / QR.');
+            console.log('⚠️ SESSION_ID invalid. Requesting fresh pair code / QR.');
         }
     }
 
@@ -104,19 +131,18 @@ async function createSocket(sessionId) {
 
     const sock = makeWASocket({
         version,
-        logger:                     pino({ level: 'silent' }),
-        printQRInTerminal:          !hasLocalSession(),
-        auth:                       state,
-        browser:                    Browsers.macOS('Chrome'),
+        logger: pino({ level: 'silent' }),
+        printQRInTerminal: !hasLocalSession(),
+        auth: state,
+        browser: Browsers.macOS('Chrome'),
         generateHighQualityLinkPreview: true,
-        syncFullHistory:            false,
-        markOnlineOnConnect:        true,
-        keepAliveIntervalMs:        30_000,
-        connectTimeoutMs:           60_000,
-        defaultQueryTimeoutMs:      60_000,
-        shouldSyncHistoryMessage:   () => false,
-      //  getMessage:                 async () => ({ conversation: '' })
-        
+        syncFullHistory: false,
+        markOnlineOnConnect: true,
+        keepAliveIntervalMs: 30000,
+        connectTimeoutMs: 60000,
+        defaultQueryTimeoutMs: 60000,
+        shouldSyncHistoryMessage: () => false,
+        getMessage: null // Removed fallback to prevent "CRYSNOVA AI" spam
     });
 
     return { sock, saveCreds, state };
@@ -125,13 +151,12 @@ async function createSocket(sessionId) {
 async function clearSession() {
     try {
         await fs.remove(SESSION_PATH);
-        console.log('🗑️  Session cleared.');
+        console.log('🗑️ Session cleared.');
     } catch (err) {
         console.log('❌ Failed to clear session:', err.message);
     }
 }
 
-// ── Keep the konek export so CRYSNOVA's ⚉.js doesn't break ──
 const konek = async ({ sock, update, clientstart, DisconnectReason, Boom }) => {
     const { connection, lastDisconnect } = update;
     if (connection === 'close') {
@@ -142,27 +167,26 @@ const konek = async ({ sock, update, clientstart, DisconnectReason, Boom }) => {
             process.exit(1);
         }
         if (reason === DisconnectReason.connectionReplaced) {
-            console.log('⚠️  Connection replaced. Exiting...');
+            console.log('⚠️ Connection replaced. Exiting...');
             process.exit(1);
         }
         if (reason === DisconnectReason.badSession) {
             console.log('❌ Bad session. Delete sessions folder and re-pair.');
             process.exit(1);
         }
-        // All other reasons → index.js setTimeout(clientstart, 3000) handles it
         console.log(`🔄 Disconnected (code: ${reason}) — reconnecting in 3s...`);
     } else if (connection === 'open') {
         console.log('✓ Bot connected successfully');
     }
 };
 
-module.exports = {
+export {
     createSocket,
     getAuthState,
     decodeSession,
     encodeSession,
     hasLocalSession,
     clearSession,
-    konek,           // keep for ⚉.js destructure { konek }
+    konek,
     SESSION_PATH
 };
