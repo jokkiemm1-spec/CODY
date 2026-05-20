@@ -59,7 +59,7 @@ Config (CODY AI structure + CRYSNOVA V2 fields)
 const config = {
 
     // ════════════════════════════════════════════
-    // BOT IDENTITY (CODY AI .env style)
+    // CODY IDENTITY
     // ════════════════════════════════════════════
     owner: resolvedOwner,
 
@@ -83,7 +83,38 @@ const config = {
         'https://cdn.crysnovax.link/files/1778529162616-eca99707-7b11-453a-802a-e85a9d1c2395.jpeg',
 
     // ════════════════════════════════════════════
-    // BOT STATUS / MODE (CODY AI .env style)
+    // PANEL CONNECTOR API (CODY → Main Bot)
+    // ════════════════════════════════════════════
+    panelApiUrl:
+        process.env.PANEL_API_URL    ||
+        getVar('PANEL_API_URL')      ||
+        userConfig?.panelApiUrl      ||
+        'http://localhost:9000',
+
+    // ════════════════════════════════════════════
+    // GITHUB (CODY → Repos)
+    // ════════════════════════════════════════════
+    github: {
+        token:
+            process.env.GITHUB_TOKEN     ||
+            getVar('GITHUB_TOKEN')       ||
+            userConfig?.github?.token    ||
+            '',
+        username:
+            process.env.GITHUB_USERNAME  ||
+            getVar('GITHUB_USERNAME')    ||
+            userConfig?.github?.username ||
+            'crysnovax',
+        repos: [
+            'crysnovax/CODY',
+            'crysnovax/CRYSNOVA_AI'
+        ],
+        memoryRepo: 'crysnovax/CODY',
+        memoryPath: 'memory'
+    },
+
+    // ════════════════════════════════════════════
+    // BOT STATUS / MODE
     // ════════════════════════════════════════════
     status: {
         public:   process.env.PUBLIC_MODE   !== undefined ? process.env.PUBLIC_MODE   === 'false'  : (getVar('PUBLIC_MODE')   ?? userConfig?.bot?.public   ?? true),
@@ -92,7 +123,7 @@ const config = {
     },
 
     // ════════════════════════════════════════════
-    // BOT MODE FLAGS (CODY AI specific)
+    // BOT MODE FLAGS
     // ════════════════════════════════════════════
     mode: {
         autoRead:      process.env.AUTO_READ      !== 'false',
@@ -103,7 +134,7 @@ const config = {
     },
 
     // ════════════════════════════════════════════
-    // SETTINGS (CRYSNOVA V2 style with .env)
+    // SETTINGS
     // ════════════════════════════════════════════
     settings: {
         title:
@@ -118,12 +149,8 @@ const config = {
             userConfig?.bot?.name        ||
             'CODY AI',
 
-        // ════════════════════════════════════════════
-        // PREFIX — supports null/empty for no prefix
-        // ════════════════════════════════════════════
         prefix: (() => {
             const envPrefix = process.env.PREFIX;
-            // Allow explicit null/empty — means no prefix
             if (envPrefix !== undefined) {
                 return (envPrefix === 'null' || envPrefix === '') ? '' : envPrefix;
             }
@@ -138,10 +165,10 @@ const config = {
                 return (userPrefix === 'null' || userPrefix === '') ? '' : userPrefix;
             }
 
-            return '.'; // Default
+            return '.';
         })(),
 
-        description: 'Professional WhatsApp Bot — CODY AI powered by CRYSNOVA AI V2',
+        description: 'CODY AI — Autonomous Developer Assistant powered by CRYSNOVA AI V2',
         author:      'https://github.com/crysnovax/CODY',
         footer:      '© CODY AI | Powered by CRYSNOVA AI',
 
@@ -158,7 +185,7 @@ const config = {
     },
 
     // ════════════════════════════════════════════
-    // PERMISSIONS (CODY AI .env style)
+    // PERMISSIONS
     // ════════════════════════════════════════════
     permissions: {
         owners: process.env.OWNER_NUMBERS
@@ -169,7 +196,7 @@ const config = {
     },
 
     // ════════════════════════════════════════════
-    // MESSAGES (CRYSNOVA V2 style)
+    // MESSAGES
     // ════════════════════════════════════════════
     message: {
         owner:   '`ⓘ OWNER ONLY 彡`',
@@ -186,7 +213,7 @@ const config = {
     },
 
     // ════════════════════════════════════════════
-    // AUTO REPLY (CODY AI feature)
+    // AUTO REPLY
     // ════════════════════════════════════════════
     autoReply: {
         enabled: process.env.AUTO_REPLY !== 'false',
@@ -204,7 +231,7 @@ const config = {
     },
 
     // ════════════════════════════════════════════
-    // NEWSLETTER (CRYSNOVA V2 style)
+    // NEWSLETTER
     // ════════════════════════════════════════════
     newsletter: {
         name:
@@ -215,7 +242,7 @@ const config = {
     },
 
     // ════════════════════════════════════════════
-    // API KEYS (CODY AI .env style)
+    // API KEYS
     // ════════════════════════════════════════════
     api: {
         baseurl:
@@ -239,7 +266,6 @@ const config = {
             getVar('WEATHER_API_KEY')   ||
             'e6926030169752d7e0d85377e489c415',
         
-        // 🔐 CRYSNOVA Unified Gateway
         gateway:
             process.env.GATEWAY_URL     ||
             getVar('GATEWAY_URL')       ||
@@ -253,12 +279,10 @@ const config = {
             process.env.CDN_URL         ||
             getVar('CDN_URL')           ||
             'https://cdn.crysnovax.link',
-        // 🎨 Image generation API base
         imageBase:
             process.env.IMAGE_API_BASE  ||
             getVar('IMAGE_API_BASE')    ||
             'https://apis.prexzyvilla.site/ai',
-        // 🖼️ Remove.bg API key
         removebg:
             process.env.REMOVE_BG_API_KEY ||
             getVar('REMOVE_BG_API_KEY')   ||
@@ -266,7 +290,7 @@ const config = {
     },
 
     // ════════════════════════════════════════════
-    // STICKER (CRYSNOVA V2 style)
+    // STICKER
     // ════════════════════════════════════════════
     sticker: {
         packname:
@@ -280,7 +304,7 @@ const config = {
     },
 
     // ════════════════════════════════════════════
-    // BRANDING (CODY AI style)
+    // BRANDING
     // ════════════════════════════════════════════
     branding: {
         footer:  '© CODY AI | Powered by CRYSNOVA AI',
@@ -290,7 +314,7 @@ const config = {
     },
 
     // ════════════════════════════════════════════
-    // LOGGING (CODY AI style)
+    // LOGGING
     // ════════════════════════════════════════════
     logging: {
         level:       process.env.LOG_LEVEL || 'silent',
@@ -299,7 +323,7 @@ const config = {
     },
 
     // ════════════════════════════════════════════
-    // STATUS HANDLER SETTINGS (CRYSNOVA V2)
+    // STATUS HANDLER SETTINGS
     // ════════════════════════════════════════════
     statusHandler: {
         autoView:
