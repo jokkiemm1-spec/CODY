@@ -25,6 +25,15 @@ try {
 } catch (err) {
     console.error(chalk.red('[AUTO-UPDATE] Failed to read config:'), err.message);
 }
+// -------------------------------------------------------------------
+// 2. Start Panel Connector API FIRST
+// -------------------------------------------------------------------
+try {
+    require('./☁︎.js');
+} catch (e) {
+    console.error(chalk.red('🔌 [PANEL API] Failed:'), e.message);
+}
+
 
 // -------------------------------------------------------------------
 // 2. If enabled, run the update and WAIT for it to finish
@@ -59,3 +68,4 @@ try {
 })();
 
 //🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖
+
