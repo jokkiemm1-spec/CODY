@@ -1,18 +1,16 @@
 /**
- * CRYSNOVA AI V2 – Entry Point
- * 🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖
+ * JOMS AI – Entry Point
  */
 
-// ── DATABASE REDIRECT (Cloudflare KV on Render, local otherwise) ──
+// ── DATABASE REDIRECT ──
 require('./redirect.js');
-// ─────────────────────────────────────────────────────────────────
 
 const fs = require('fs');
 const path = require('path');
 const chalk = require('chalk');
 
 // -------------------------------------------------------------------
-// 1. Check if auto‑update is enabled
+// 1. Check if auto-update is enabled
 // -------------------------------------------------------------------
 const CONFIG_PATH = path.join(process.cwd(), 'database', 'autoupdate.json');
 let autoUpdateEnabled = false;
@@ -36,7 +34,7 @@ try {
 }
 
 // -------------------------------------------------------------------
-// 3. Register with Cody Worker (silent)
+// 3. Register with Worker (silent)
 // -------------------------------------------------------------------
 const CODY_API_KEY = process.env.CODY_API_KEY || '';
 const BOT_URL = process.env.BOT_URL || process.env.RENDER_EXTERNAL_URL || '';
@@ -44,45 +42,44 @@ const BOT_URL = process.env.BOT_URL || process.env.RENDER_EXTERNAL_URL || '';
 if (CODY_API_KEY && BOT_URL) {
     const axios = require('axios');
     axios.post('https://cody.crysnovax.link/register', {
-        name: 'crysnova',
+        name: 'joms-ai',
         url: BOT_URL,
         api_key: CODY_API_KEY
-    }).then(() => console.log(chalk.green('✅ Registered with Cody Worker')))
-      .catch(e => console.log(chalk.yellow('⚠️ Cody Worker registration failed:'), e.message));
+    }).then(() => console.log(chalk.green('✅ Registered with Worker')))
+      .catch(e => console.log(chalk.yellow('⚠️ Worker registration failed:'), e.message));
 } else {
-    console.log(chalk.gray('ℹ️ Cody Worker registration skipped (no API key or URL)'));
+    console.log(chalk.gray('ℹ️ Worker registration skipped (no API key or URL)'));
 }
 
 // -------------------------------------------------------------------
-// 4. If enabled, run the update and WAIT for it to finish
+// 4. Run update if enabled
 // -------------------------------------------------------------------
 (async () => {
     if (autoUpdateEnabled) {
-        console.log(chalk.yellow('𝌆  updating...ⓘ'));
-        console.log(chalk.cyan('🔖 [CRYSNOVA] —͟͟͞͞𖣘❚ Starting update (blocking startup)...'));
+        console.log(chalk.yellow('🤖 JOMS AI updating...'));
+        console.log(chalk.cyan('🤖 [JOMS AI] Starting update...'));
 
         const { performUpdate } = require('./src/Plugin/updater.js');
 
         try {
             const result = await performUpdate({ notifyOwner: null });
+
             if (result.success) {
-                console.log(chalk.green('✓ [CRYSNOVA] Background update completed successfully.'));
-                console.log(chalk.cyan('🔖 [CRYSNOVA] —͟͟͞͞𖣘❚ Changes applied.'));
+                console.log(chalk.green('✓ [JOMS AI] Update completed successfully.'));
+                console.log(chalk.cyan('🤖 [JOMS AI] Changes applied.'));
             } else {
-                console.log(chalk.red('✘ [CRYSNOVA] Background update failed:'), result.error);
+                console.log(chalk.red('✘ [JOMS AI] Update failed:'), result.error);
             }
         } catch (err) {
-            console.error(chalk.red('✘ [CRYSNOVA] Background update error:'), err);
+            console.error(chalk.red('✘ [JOMS AI] Update error:'), err);
         }
     } else {
-        console.log(chalk.gray('ⓘ Auto‑update is disabled. Skipping.'));
+        console.log(chalk.gray('ⓘ Auto-update is disabled. Skipping.'));
     }
 
     // -------------------------------------------------------------------
-    // 5. Load and start 
+    // 5. Load and start bot
     // -------------------------------------------------------------------
-    console.log(chalk.cyan('🔖 [CRYSNOVA] —͟͟͞͞𖣘❚ Loading main bot...'));
+    console.log(chalk.cyan('🤖 [JOMS AI] Loading main bot...'));
     require('./⚉.js');
 })();
-
-//🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖🔖
